@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#176b58">
+<title>Mis Citas</title>
+<style>
+:root{--green:#176b58;--green2:#21866d;--bg:#f4f7f6;--ink:#172a27;--muted:#687a76;--line:#dfe8e5;--white:#fff;--pink:#fae7e8;--amber:#fff1d9;--shadow:0 8px 24px rgba(19,61,51,.08)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{background:linear-gradient(135deg,#145a4b,#23876d);color:white;padding:24px 18px 22px;border-radius:0 0 24px 24px}
+.head{max-width:760px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:12px}.logo{width:48px;height:48px;border-radius:16px;background:#ffffff24;display:grid;place-items:center;font-size:25px}
+h1{font-size:25px;margin:0;letter-spacing:-.5px}header p{margin:4px 0 0;color:#d8eee7;font-size:14px}
+main{max-width:760px;margin:0 auto;padding:18px 14px 36px}
+.topline{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:6px 2px 14px}
+h2{font-size:19px;margin:0}.muted{color:var(--muted);font-size:13px}
+button,.button{font:inherit;border:0;border-radius:13px;padding:12px 15px;cursor:pointer;font-weight:650;min-height:44px}
+.primary{background:var(--green);color:white}.primary:active{background:#104b3e}.secondary{background:#e2efeb;color:var(--green)}.plain{background:transparent;color:var(--muted);padding:8px}
+.tabs{display:flex;gap:7px;background:#e8eeec;padding:5px;border-radius:14px;margin-bottom:16px}
+.tabs button{flex:1;background:transparent;color:#51635f;padding:9px 6px;min-height:40px}.tabs button.active{background:white;color:var(--green);box-shadow:0 2px 8px #1b4b3c12}
+.card{background:var(--white);border:1px solid var(--line);border-radius:19px;padding:16px;box-shadow:var(--shadow);margin-bottom:13px}
+.section-label{font-weight:750;margin:18px 3px 9px;display:flex;align-items:center;justify-content:space-between}
+.appointment{display:grid;grid-template-columns:66px 1fr auto;gap:12px;align-items:center;background:white;border:1px solid var(--line);border-radius:16px;padding:13px 11px;margin-bottom:9px}
+.time{font-weight:800;color:var(--green);font-size:16px;border-right:2px solid #c9e4da;padding-right:9px}
+.person{font-weight:750;overflow-wrap:anywhere}.note{color:var(--muted);font-size:13px;margin-top:3px;overflow-wrap:anywhere}.actions{display:flex;gap:4px}.smallbtn{background:#f0f5f3;color:#3e6259;padding:8px;min-width:38px;min-height:38px;border-radius:11px}
+.empty{text-align:center;padding:30px 15px;color:var(--muted)}.empty .emoji{font-size:36px;margin-bottom:8px}
+label{display:block;font-weight:650;font-size:14px;margin:13px 0 6px}input,textarea{width:100%;font:inherit;font-size:16px;padding:12px 13px;border:1px solid #d7e2de;border-radius:12px;background:white;color:var(--ink);outline:none}input:focus,textarea:focus{border-color:var(--green2);box-shadow:0 0 0 3px #21866d1c}textarea{min-height:80px;resize:vertical}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.checks{display:grid;gap:8px;margin:8px 0 15px}.checkrow{display:flex;align-items:center;gap:10px;font-weight:500;margin:0}.checkrow input{width:20px;height:20px;accent-color:var(--green)}
+.formactions{display:flex;gap:9px;margin-top:17px}.formactions button{flex:1}
+.hidden{display:none!important}.notice{border-radius:13px;padding:12px 13px;background:#e6f2ed;color:#245a4c;font-size:13px;margin:12px 0}.warn{background:var(--amber);color:#78571b}.footer{color:var(--muted);font-size:12px;line-height:1.5;text-align:center;padding:14px 10px}
+.search{margin-bottom:13px}.pill{font-size:11px;font-weight:750;padding:4px 7px;border-radius:8px;background:#e4f2ec;color:#20664f;white-space:nowrap}
+@media(max-width:430px){header{padding-top:19px}.appointment{grid-template-columns:58px 1fr auto;gap:9px;padding:11px 9px}.actions{flex-direction:column}.smallbtn{min-width:34px;min-height:34px;padding:6px}.formgrid{gap:8px}.card{padding:14px}}
+</style>
+</head>
+<body>
+<header><div class="head"><div class="brand"><div class="logo">▦</div><div><h1>Mis Citas</h1><p>Tu agenda, clara y a mano</p></div></div><button id="settingsBtn" class="secondary" aria-label="Ayuda y avisos">⚙️</button></div></header>
+<main>
+  <div id="homeView">
+    <div class="topline"><div><h2 id="listTitle">Próximas citas</h2><div class="muted" id="todayLabel"></div></div><button class="primary" id="newBtn">＋ Nueva cita</button></div>
+    <div class="card" style="padding:12px 14px;margin-bottom:13px">
+      <label for="dayPicker" style="margin-top:0">📅 Calendario diario · Ver citas de un día</label>
+      <div class="formgrid" style="align-items:center"><input id="dayPicker" type="date" aria-label="Elegir día para ver citas"><button class="secondary" id="showDay">Ver este día</button></div>
+    </div>
+    <div class="tabs" role="tablist"><button data-filter="upcoming">Próximas</button><button class="active" data-filter="today">Hoy</button><button data-filter="all">Todas</button><button data-filter="day">Día elegido</button></div>
+    <input class="search" id="search" type="search" placeholder="Buscar por nombre o nota…" aria-label="Buscar citas">
+    <div id="appointments"></div>
+    <div class="footer">Tus citas se guardan en este navegador de este dispositivo.</div>
+  </div>
+  <div id="formView" class="hidden">
+    <div class="topline"><div><h2 id="formTitle">Nueva cita</h2><div class="muted">Completa los datos de la cita</div></div><button class="plain" id="backBtn">Cancelar</button></div>
+    <form id="appointmentForm" class="card">
+      <input type="hidden" id="editId">
+      <label for="name">Nombre de la persona *</label><input id="name" required maxlength="120" autocomplete="off" placeholder="Nombre y apellidos">
+      <div class="formgrid"><div><label for="date">Fecha *</label><input id="date" type="date" required></div><div><label for="time">Hora *</label><input id="time" type="time" required></div></div>
+      <label for="notes">Notas (opcional)</label><textarea id="notes" maxlength="1000" placeholder="Teléfono, dirección, algo que recordar…"></textarea>
+      <div class="section-label">🔔 Recordatorios</div>
+      <div class="muted">Selecciona los avisos que quieres preparar para esta cita.</div>
+      <div class="checks">
+        <label class="checkrow"><input type="checkbox" id="remDay" checked> 1 día antes</label>
+        <label class="checkrow"><input type="checkbox" id="remHour" checked> 1 hora antes</label>
+        <label class="checkrow"><input type="checkbox" id="rem15"> 15 minutos antes</label>
+      </div>
+      <div class="notice warn">Para recibir alarmas fiables con la app cerrada, guarda la cita en el calendario del Android mediante el archivo de recordatorio que puedes generar después. Esta página por sí sola no garantiza avisos en segundo plano.</div>
+      <div class="formactions"><button type="button" class="secondary" id="cancelBtn">Cancelar</button><button class="primary" type="submit">Guardar cita</button></div>
+    </form>
+  </div>
+  <div id="settingsView" class="hidden">
+    <div class="topline"><div><h2>Ayuda y privacidad</h2><div class="muted">Información importante</div></div><button class="plain" id="settingsBack">Volver</button></div>
+    <div class="card">
+      <h2 style="margin-bottom:8px">Cómo funcionan los datos</h2>
+      <p class="muted">Las citas se guardan en el almacenamiento local del navegador. No se envían a tu cuenta ni se comparten contigo, pero solo estarán en este navegador y dispositivo.</p>
+      <div class="notice warn">Si se borran los datos del navegador o se cambia de dispositivo, las citas pueden perderse. Exporta una copia de seguridad regularmente.</div>
+      <h2 style="margin:18px 0 8px">Alarmas en Android</h2>
+      <p class="muted">Para que los avisos suenen aunque esta página esté cerrada, abre el archivo de calendario de cada cita y añádelo al calendario del teléfono. Después comprueba que el calendario tenga las notificaciones activadas.</p>
+      <div class="formactions"><button class="secondary" id="exportAll">Exportar citas (.json)</button><button class="secondary" id="importBtn">Importar copia</button></div>
+      <input class="hidden" id="importFile" type="file" accept="application/json">
+      <div class="formactions"><button class="secondary" id="exportCalendar">Exportar calendario (.ics)</button><button class="secondary" id="clearAll">Borrar todas las citas</button></div>
+    </div>
+  </div>
+</main>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const STORAGE='misCitasAppointments_v1';
+let items=[],filter='upcoming';
+try{items=JSON.parse(localStorage.getItem(STORAGE)||'[]');if(!Array.isArray(items))items=[];}catch(e){items=[];}
+const todayISO=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+const now=new Date();
+$('todayLabel').textContent=now.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'});
+$('dayPicker').value=todayISO();
+function save(){try{localStorage.setItem(STORAGE,JSON.stringify(items));}catch(e){alert('No se han podido guardar los datos en este navegador. Exporta una copia o libera espacio.');}}
+function escapeHTML(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function dt(a){return new Date(`${a.date}T${a.time||'00:00'}:00`)}
+function fmtDate(s){if(!s)return '';const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d).toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short',year:'numeric'});}
+function show(view){$('homeView').classList.toggle('hidden',view!=='home');$('formView').classList.toggle('hidden',view!=='form');$('settingsView').classList.toggle('hidden',view!=='settings');}
+function render(){
+ const q=$('search').value.trim().toLocaleLowerCase('es');let list=[...items].sort((a,b)=>dt(a)-dt(b));
+ if(filter==='upcoming')list=list.filter(a=>dt(a)>=new Date());
+ if(filter==='today')list=list.filter(a=>a.date===todayISO());
+ if(filter==='day')list=list.filter(a=>a.date===($('dayPicker').value||todayISO()));
+ if(q)list=list.filter(a=>(a.name+' '+(a.notes||'')).toLocaleLowerCase('es').includes(q));
+ $('listTitle').textContent=filter==='today'?'Citas de hoy':filter==='all'?'Todas las citas':filter==='day'?'Agenda del '+fmtDate($('dayPicker').value||todayISO()):'Próximas citas';
+ const host=$('appointments');host.innerHTML='';
+ if(!list.length){host.innerHTML='<div class="card empty"><div class="emoji">🗓️</div><strong>No hay citas para mostrar</strong><p class="muted">Pulsa «Nueva cita» para añadir la primera.</p><button class="primary" id="emptyNew">＋ Nueva cita</button></div>'; $('emptyNew').onclick=()=>openForm();return;}
+ let current='';
+ list.forEach(a=>{
+  const group=filter==='today'?'Hoy':a.date===todayISO()?'Hoy':fmtDate(a.date);
+  if(group!==current){const h=document.createElement('div');h.className='section-label';h.textContent=group;host.appendChild(h);current=group;}
+  const el=document.createElement('div');el.className='appointment';
+  el.innerHTML=`<div class="time">${escapeHTML(a.time)}</div><div><div class="person">${escapeHTML(a.name)}</div>${a.notes?`<div class="note">${escapeHTML(a.notes)}</div>`:''}<div class="note">${escapeHTML(fmtDate(a.date))}</div><div style="margin-top:7px"><span class="pill" style="${a.attended?'background:#dff3e5;color:#17633b':'background:#fff1d9;color:#805d17'}">${a.attended?'✓ Ha venido':'Pendiente de asistencia'}</span></div></div><div class="actions"><button class="smallbtn" title="${a.attended?'Marcar como pendiente':'Confirmar asistencia'}" aria-label="${a.attended?'Marcar como pendiente':'Confirmar asistencia'}">${a.attended?'↩':'✓'}</button><button class="smallbtn" title="Editar" aria-label="Editar cita">✎</button><button class="smallbtn" title="Exportar recordatorio" aria-label="Exportar recordatorio">🔔</button><button class="smallbtn" title="Eliminar" aria-label="Eliminar cita">×</button></div>`;
+  const bs=el.querySelectorAll('button');
+  bs[0].onclick=()=>{a.attended=!a.attended;a.attendanceUpdatedAt=a.attended?new Date().toISOString():null;save();render();};
+  bs[1].onclick=()=>openForm(a.id);bs[2].onclick=()=>downloadICS([a]);bs[3].onclick=()=>{if(confirm(`¿Eliminar la cita de ${a.name}?`)){items=items.filter(x=>x.id!==a.id);save();render();}};
+  host.appendChild(el);
+ });
+}
+function openForm(id){
+ const a=items.find(x=>x.id===id);$('appointmentForm').reset();$('editId').value=a?.id||'';$('formTitle').textContent=a?'Editar cita':'Nueva cita';
+ $('name').value=a?.name||'';$('date').value=a?.date||todayISO();$('time').value=a?.time||'09:00';$('notes').value=a?.notes||'';
+ $('remDay').checked=a?.reminders?.day??true;$('remHour').checked=a?.reminders?.hour??true;$('rem15').checked=a?.reminders?.m15??false;show('form');window.scrollTo(0,0);
+}
+$('appointmentForm').addEventListener('submit',e=>{
+ e.preventDefault();const name=$('name').value.trim(),date=$('date').value,time=$('time').value;
+ if(!name||!date||!time){alert('Completa el nombre, la fecha y la hora.');return;}
+ const old=items.find(x=>x.id===$('editId').value);
+ const a={id:old?.id||`${Date.now()}-${Math.random().toString(36).slice(2,8)}`,name,date,time,notes:$('notes').value.trim(),reminders:{day:$('remDay').checked,hour:$('remHour').checked,m15:$('rem15').checked},updatedAt:new Date().toISOString()};
+ if(old)items=items.map(x=>x.id===old.id?a:x);else items.push(a);save();show('home');render();
+});
+$('newBtn').onclick=()=>openForm();$('backBtn').onclick=$('cancelBtn').onclick=()=>{show('home');render();};$('search').addEventListener('input',render);
+$('showDay').onclick=()=>{filter='day';document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x.dataset.filter===filter));render();};
+$('dayPicker').addEventListener('change',()=>{if(filter==='day')render();});
+document.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x===b));render();});
+$('settingsBtn').onclick=()=>show('settings');$('settingsBack').onclick=()=>{show('home');render();};
+function download(name,content,type){const blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);}
+$('exportAll').onclick=()=>download('mis-citas-copia.json',JSON.stringify(items,null,2),'application/json');
+$('importBtn').onclick=()=>$('importFile').click();
+$('importFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const data=JSON.parse(await f.text());if(!Array.isArray(data)||data.some(a=>!a.name||!a.date||!a.time))throw new Error();if(confirm(`Se importarán ${data.length} citas. ¿Continuar?`)){items=data.map(a=>({...a,attended:!!a.attended}));save();render();show('home');}}catch(err){alert('El archivo no parece una copia válida de Mis Citas.');}e.target.value='';};
+$('clearAll').onclick=()=>{if(confirm('¿Seguro que quieres borrar todas las citas de este dispositivo? Esta acción no se puede deshacer.')){items=[];save();render();show('home');}};
+function icsEscape(s){return String(s||'').replace(/\\/g,'\\\\').replace(/\n/g,'\\n').replace(/,/g,'\\,').replace(/;/g,'\\;');}
+function localICSDate(date,time){return date.replaceAll('-','')+'T'+time.replace(':','')+'00';}
+function downloadICS(list){
+ if(!list.length){alert('No hay citas para exportar.');return;}
+ const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Mis Citas//ES','CALSCALE:GREGORIAN','METHOD:PUBLISH'];
+ list.forEach(a=>{
+  const start=dt(a);if(Number.isNaN(start.getTime()))return;
+  const end=new Date(start.getTime()+30*60000);
+  const stamp=d=>`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}T${String(d.getHours()).padStart(2,'0')}${String(d.getMinutes()).padStart(2,'0')}00`;
+  lines.push('BEGIN:VEVENT',`UID:${icsEscape(a.id)}@miscitas`,`DTSTAMP:${stamp(new Date())}`,`DTSTART:${stamp(start)}`,`DTEND:${stamp(end)}`,`SUMMARY:${icsEscape('Cita: '+a.name)}`,`DESCRIPTION:${icsEscape(a.notes||'')}`);
+  const rs=a.reminders||{day:true,hour:true,m15:false};
+  [[rs.day,1440,'Recordatorio: cita mañana'],[rs.hour,60,'Recordatorio: cita en una hora'],[rs.m15,15,'Recordatorio: cita en 15 minutos']].forEach(([enabled,mins,desc])=>{if(enabled){lines.push('BEGIN:VALARM','ACTION:DISPLAY',`DESCRIPTION:${icsEscape(desc)}`,`TRIGGER:-PT${mins}M`,'END:VALARM');}});
+  lines.push('END:VEVENT');
+ });
+ lines.push('END:VCALENDAR');
+ download(list.length===1?'recordatorio-cita.ics':'mis-citas-calendario.ics',lines.join('\r\n'),'text/calendar;charset=utf-8');
+ alert('Se ha preparado el archivo de calendario. Ábrelo y añádelo al calendario de Android; comprueba que los avisos estén activados.');
+}
+$('exportCalendar').onclick=()=>downloadICS(items);
+render();
+})();
+</script>
+</body>
+</html>
